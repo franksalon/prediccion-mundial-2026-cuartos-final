@@ -1,0 +1,25 @@
+ORDEN RECOMENDADO DE EJECUCIÓN
+===============================
+
+cd ~/Descargas/prediccion-mundial-2026-cuartos-final
+source venv/bin/activate
+
+python 00_actualizar_datos_oficiales.py
+python 12_actualizar_fixtures_modelo_cuartos.py
+python 13_predecir_semifinales.py
+python 10_ver_metricas_modelos.py
+python 14_panel_integral_cuartos.py
+
+ARCHIVOS IMPORTANTES
+====================
+
+data/fixtures_octavos.csv
+data/fixtures_cuartos.csv
+data/tarjetas_octavos_reales.csv
+data/fixtures_cuartos_modelo.csv
+outputs/prediccion_cuartos_a_semifinales.csv
+outputs/prediccion_tarjetas_cuartos.csv
+outputs/clasificados_semifinales.csv
+outputs/analisis_contexto_cuartos.csv
+outputs/panel_integral_cuartos.png
+outputs/panel_competencia_modelos.png

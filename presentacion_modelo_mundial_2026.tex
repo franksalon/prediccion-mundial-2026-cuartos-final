@@ -1,0 +1,864 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\definecolor{untrmblue}{RGB}{18,60,105}
+\definecolor{untrmgreen}{RGB}{28,122,92}
+\definecolor{softgray}{RGB}{245,247,250}
+\definecolor{accentgold}{RGB}{214,157,49}
+
+\setbeamercolor{structure}{fg=untrmblue}
+\setbeamercolor{palette primary}{bg=untrmblue,fg=white}
+\setbeamercolor{palette secondary}{bg=untrmgreen,fg=white}
+\setbeamercolor{palette tertiary}{bg=accentgold,fg=white}
+\setbeamercolor{frametitle}{bg=untrmblue,fg=white}
+\setbeamercolor{title}{fg=white,bg=untrmblue}
+\setbeamercolor{block title}{bg=untrmblue,fg=white}
+\setbeamercolor{block body}{bg=softgray,fg=black}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamerfont{author}{size=\small}
+\setbeamerfont{institute}{size=\scriptsize}
+\setbeamersize{text margin left=8mm,text margin right=8mm}
+\setbeamertemplate{itemize item}{\color{untrmgreen}$\blacktriangleright$}
+\setbeamertemplate{itemize subitem}{\color{accentgold}$\bullet$}
+
+\graphicspath{{outputs/}}
+
+\title[Modelo Mundial 2026]{Modelo Mundial 2026}
+\subtitle{Predicción de resultados con modelos de regresión y contexto competitivo}
+\author[Equipo de trabajo]{
+    Bustamante Vela Jean Frank\\
+    Marreros Cortegana Miguel Angel\\
+    Fernandez Campos Valentin\\
+    Salon Trigoso Frank\\
+    Tuesta Chuquizuta Maria Carmen
+}
+\institute[UNTRM]{
+    Universidad Nacional Toribio Rodriguez de Mendoza de Amazonas\\
+    Curso: Modelos de Regresión y Aprendizaje Supervisado
+}
+\date{\today}
+
+\begin{document}
+
+%------------------------------------------------
+\begin{frame}
+    \titlepage
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Idea central del proyecto}
+\justifying
+El proyecto busca estimar los posibles resultados de partidos del Mundial 2026 a partir de información histórica y variables deportivas medibles.
+
+\vspace{0.25cm}
+\begin{block}{Pregunta guía}
+¿Qué tan probable es que un equipo gane, empate o pierda un partido, y qué marcador aparece como más probable según los modelos?
+\end{block}
+
+\vspace{0.2cm}
+La propuesta combina modelos de regresión, probabilidades de marcadores y un ajuste por contexto competitivo para simular escenarios de fase de grupos.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Objetivo del estudio}
+\begin{block}{Objetivo general}
+Construir un sistema predictivo que estime goles esperados, probabilidades de resultado y clasificación a la siguiente ronda del Mundial 2026.
+\end{block}
+
+\vspace{0.2cm}
+\begin{itemize}
+    \item Estimar goles esperados del equipo local y visitante.
+    \item Comparar diferentes modelos de regresión supervisada.
+    \item Transformar goles esperados en probabilidades de victoria, empate y derrota.
+    \item Simular tablas de grupos, mejores terceros y cruces de 16avos.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Información recolectada}
+\justifying
+Para representar la fuerza deportiva de cada selección se integraron distintas fuentes de información.
+
+\vspace{0.25cm}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{Datos deportivos}
+\begin{itemize}
+    \item Resultados históricos internacionales.
+    \item Goles anotados y recibidos recientemente.
+    \item Puntos obtenidos en partidos previos.
+    \item Historial de enfrentamientos directos.
+\end{itemize}
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{Datos de contexto}
+\begin{itemize}
+    \item Ranking FIFA.
+    \item Rating Elo.
+    \item Condición de campo neutral.
+    \item Ventaja de localía.
+    \item Información de calendario y grupos.
+\end{itemize}
+\end{block}
+\end{columns}
+
+\vspace{0.2cm}
+La base final de entrenamiento contiene \textbf{5 901 partidos} y el fixture analizado contiene \textbf{72 encuentros}.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Variables predictoras}
+\justifying
+El modelo utiliza 13 variables principales, agrupadas en cuatro bloques.
+
+\vspace{0.2cm}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.23\textwidth}X}
+\toprule
+Bloque & Variables consideradas \\
+\midrule
+Forma reciente local & Goles a favor, goles en contra, puntos y partidos recientes del equipo local.\\
+Forma reciente visitante & Goles a favor, goles en contra, puntos y partidos recientes del equipo visitante.\\
+Fuerza comparativa & Diferencia en ranking FIFA, diferencia en rating Elo e historial directo.\\
+Contexto del partido & Campo neutral y ventaja de localía.\\
+\bottomrule
+\end{tabularx}
+
+\vspace{0.3cm}
+Estas variables permiten representar rendimiento, fortaleza relativa y condiciones del encuentro.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Vector matemático de entrada}
+\justifying
+Cada partido se representa mediante un vector de 13 características:
+
+\[
+X = (X_1, X_2, X_3, \dots, X_{13})
+\]
+
+\vspace{0.15cm}
+\begin{block}{Interpretación}
+El vector $X$ resume la información deportiva y contextual disponible antes del partido: forma reciente, goles, puntos, ranking, rating Elo, historial directo y localía.
+\end{block}
+
+\vspace{0.2cm}
+Sobre este vector se estiman dos respuestas numéricas: los goles esperados del equipo local y los goles esperados del equipo visitante.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Correspondencia de variables}
+\scriptsize
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{clcl}
+\toprule
+Variable & Significado & Variable & Significado \\
+\midrule
+$X_1$ & Goles a favor local & $X_8$ & Partidos recientes visitante \\
+$X_2$ & Goles en contra local & $X_9$ & Diferencia ranking FIFA \\
+$X_3$ & Puntos recientes local & $X_{10}$ & Diferencia rating Elo \\
+$X_4$ & Partidos recientes local & $X_{11}$ & Historial directo \\
+$X_5$ & Goles a favor visitante & $X_{12}$ & Campo neutral \\
+$X_6$ & Goles en contra visitante & $X_{13}$ & Ventaja de localía \\
+$X_7$ & Puntos recientes visitante & & \\
+\bottomrule
+\end{tabular}
+}
+
+\vspace{0.35cm}
+\begin{block}{Nota}
+Los coeficientes numéricos presentados se interpretan sobre variables estandarizadas.
+\end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Variables objetivo}
+\justifying
+El problema se formuló como una predicción numérica de goles.
+
+\vspace{0.3cm}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{Goles del local}
+\[
+y_{\text{home}} = \text{goles anotados por el equipo local}
+\]
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{Goles del visitante}
+\[
+y_{\text{away}} = \text{goles anotados por el equipo visitante}
+\]
+\end{block}
+\end{columns}
+
+\vspace{0.3cm}
+Con estas dos estimaciones se obtiene una expectativa ofensiva para cada selección y luego se construyen probabilidades de marcador.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Modelos evaluados}
+\small
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.28\textwidth}X}
+\toprule
+Modelo & Aporte dentro del análisis \\
+\midrule
+Regresión Lineal & Estima goles mediante una relación lineal entre variables y resultado.\\
+Ridge & Regresión lineal regularizada; reduce sobreajuste y estabiliza coeficientes.\\
+Random Forest & Ensamble de árboles que captura relaciones no lineales e interacciones.\\
+Gradient Boosting & Ensamble secuencial que corrige errores de modelos anteriores.\\
+Poisson Regressor & Modelo adecuado para conteos, porque los goles son valores discretos no negativos.\\
+\bottomrule
+\end{tabularx}
+
+\vspace{0.25cm}
+La comparación permitió seleccionar el modelo con mejor equilibrio entre error e interpretación.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Regresión Lineal Múltiple}
+\justifying
+La Regresión Lineal modela la cantidad esperada de goles como una combinación ponderada de las variables del partido.
+
+\[
+\hat{y} = \beta_0 + \beta_1X_1 + \beta_2X_2 + \cdots + \beta_{13}X_{13}
+\]
+
+\vspace{0.2cm}
+Como se predicen goles de ambos equipos, se plantean dos ecuaciones:
+
+\[
+\hat{y}_{\text{home}} = \beta_{0,h} + \sum_{i=1}^{13}\beta_{i,h}X_i
+\]
+
+\[
+\hat{y}_{\text{away}} = \beta_{0,a} + \sum_{i=1}^{13}\beta_{i,a}X_i
+\]
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}[t]{Coeficientes estimados: Regresión Lineal}
+\scriptsize
+\justifying
+Coeficientes sobre variables estandarizadas. El signo indica si la variable aumenta o reduce la expectativa de goles.
+
+\vspace{0.15cm}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{Predicción local}
+\centering $\beta_0 = 1.6249$
+\vspace{0.05cm}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lr}
+\toprule
+Variable & $\beta$ \\
+\midrule
+Diferencia FIFA & 0.6405 \\
+Goles recibidos visitante & 0.4051 \\
+Goles a favor local & 0.2461 \\
+Puntos visitante & 0.1892 \\
+Puntos local & -0.1613 \\
+\bottomrule
+\end{tabular}
+}
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{Predicción visitante}
+\centering $\beta_0 = 1.1890$
+\vspace{0.05cm}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lr}
+\toprule
+Variable & $\beta$ \\
+\midrule
+Diferencia FIFA & -0.4475 \\
+Goles recibidos local & 0.3959 \\
+Goles a favor visitante & 0.2111 \\
+Puntos local & 0.1464 \\
+Puntos visitante & -0.1452 \\
+\bottomrule
+\end{tabular}
+}
+\end{block}
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}[t]{Regresión Lineal con valores del proyecto}
+\scriptsize
+\justifying
+Después de estimar los coeficientes, el modelo queda expresado de forma aproximada con los pesos principales:
+
+\vspace{0.1cm}
+\begin{block}{Goles esperados del local}
+\[
+\begin{aligned}
+\hat{y}_{\text{home}}
+&\approx
+1.6249+0.6405X_9+0.4051X_6\\
+&\quad +0.2461X_1+0.1892X_7-0.1613X_3+\cdots
+\end{aligned}
+\]
+\end{block}
+
+\begin{block}{Goles esperados del visitante}
+\[
+\begin{aligned}
+\hat{y}_{\text{away}}
+&\approx
+1.1890-0.4475X_9+0.3959X_2\\
+&\quad +0.2111X_5+0.1464X_3-0.1452X_7+\cdots
+\end{aligned}
+\]
+\end{block}
+
+\vspace{0.1cm}
+En esta forma se observa qué variables tienen mayor influencia en la predicción de goles.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Regresión Ridge}
+\justifying
+Ridge mantiene la estructura lineal, pero agrega regularización $L_2$ para controlar el tamaño de los coeficientes y reducir el sobreajuste.
+
+\[
+\min_{\beta}
+\left[
+\sum_{i=1}^{n}(y_i-\hat{y}_i)^2
++
+\alpha\sum_{j=1}^{13}\beta_j^2
+\right]
+\]
+
+\vspace{0.25cm}
+\begin{block}{Razón de uso}
+Es útil cuando existen variables relacionadas entre sí, como ranking FIFA, rating Elo, goles recientes y puntos recientes. Por eso fue elegido como modelo final.
+\end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}[t]{Coeficientes del modelo final Ridge}
+\scriptsize
+\justifying
+Coeficientes principales del modelo seleccionado. La diferencia FIFA y la fortaleza reciente tienen mayor peso.
+
+\vspace{0.15cm}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{Goles esperados del local}
+\centering $\beta_0 = 1.6249$
+\vspace{0.05cm}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lr}
+\toprule
+Variable & $\beta$ \\
+\midrule
+Diferencia FIFA & 0.6397 \\
+Goles recibidos visitante & 0.4044 \\
+Goles a favor local & 0.2456 \\
+Puntos visitante & 0.1880 \\
+Puntos local & -0.1603 \\
+\bottomrule
+\end{tabular}
+}
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{Goles esperados del visitante}
+\centering $\beta_0 = 1.1890$
+\vspace{0.05cm}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lr}
+\toprule
+Variable & $\beta$ \\
+\midrule
+Diferencia FIFA & -0.4469 \\
+Goles recibidos local & 0.3953 \\
+Goles a favor visitante & 0.2106 \\
+Puntos local & 0.1454 \\
+Puntos visitante & -0.1443 \\
+\bottomrule
+\end{tabular}
+}
+\end{block}
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}[t]{Ridge con valores del proyecto}
+\scriptsize
+\justifying
+Ridge fue el modelo seleccionado. Su forma reemplazada mantiene coeficientes similares a la regresión lineal, pero regularizados.
+
+\vspace{0.1cm}
+\begin{block}{Modelo final para goles del local}
+\[
+\begin{aligned}
+\hat{y}_{\text{home}}
+&\approx
+1.6249+0.6397X_9+0.4044X_6\\
+&\quad +0.2456X_1+0.1880X_7-0.1603X_3+\cdots
+\end{aligned}
+\]
+\end{block}
+
+\begin{block}{Modelo final para goles del visitante}
+\[
+\begin{aligned}
+\hat{y}_{\text{away}}
+&\approx
+1.1890-0.4469X_9+0.3953X_2\\
+&\quad +0.2106X_5+0.1454X_3-0.1443X_7+\cdots
+\end{aligned}
+\]
+\end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Modelos de ensamble}
+\small
+\begin{block}{Random Forest}
+Promedia la predicción de múltiples árboles de decisión:
+\[
+\hat{y} = \frac{1}{B}\sum_{b=1}^{B}T_b(X)
+\]
+\end{block}
+
+\vspace{0.15cm}
+\begin{block}{Gradient Boosting}
+Construye modelos secuenciales donde cada nuevo árbol corrige parte del error anterior:
+\[
+F_m(X)=F_{m-1}(X)+\nu h_m(X)
+\]
+\[
+r_{im}=y_i-F_{m-1}(X_i)
+\]
+\end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}[t]{Importancia de variables en modelos de ensamble}
+\scriptsize
+\justifying
+Random Forest y Gradient Boosting no generan coeficientes $\beta$ como los modelos lineales. En su lugar, se analizan importancias de variables.
+
+\vspace{0.15cm}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{Random Forest}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrr}
+\toprule
+Variable & Local & Visitante \\
+\midrule
+Diferencia FIFA & 0.5439 & 0.4807 \\
+Goles recibidos rival & 0.1283 & 0.1831 \\
+Goles a favor propio & 0.0785 & 0.0789 \\
+Puntos recientes & 0.0449 & 0.0472 \\
+Historial directo & -- & 0.0454 \\
+\bottomrule
+\end{tabular}
+}
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{Gradient Boosting}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrr}
+\toprule
+Variable & Local & Visitante \\
+\midrule
+Diferencia FIFA & 0.5033 & 0.4399 \\
+Goles recibidos rival & 0.1571 & 0.1952 \\
+Goles a favor propio & 0.0771 & 0.0741 \\
+Puntos recientes & 0.0471 & 0.0579 \\
+Historial directo & 0.0412 & 0.0566 \\
+\bottomrule
+\end{tabular}
+}
+\end{block}
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}[t]{Ensamble con valores obtenidos}
+\scriptsize
+\justifying
+En estos modelos no se reemplaza una ecuación lineal con betas, porque la predicción se construye con árboles. Por ello se reportan salidas e importancias.
+
+\vspace{0.15cm}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{Random Forest}
+\[
+\hat{y}_{\text{home}}=1.345,\qquad
+\hat{y}_{\text{away}}=1.265
+\]
+\[
+MAE_{\text{prom}}=0.9852,\quad RMSE_{\text{prom}}=1.3162
+\]
+Variable más influyente: diferencia FIFA.
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{Gradient Boosting}
+\[
+\hat{y}_{\text{home}}=1.259,\qquad
+\hat{y}_{\text{away}}=1.143
+\]
+\[
+MAE_{\text{prom}}=0.9939,\quad RMSE_{\text{prom}}=1.3434
+\]
+Mayor exactitud 1X2: $0.6274$.
+\end{block}
+\end{columns}
+
+\vspace{0.15cm}
+Los valores de $\hat{y}_{\text{home}}$ y $\hat{y}_{\text{away}}$ corresponden al partido Egypt vs Iran.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Modelo de Poisson para goles}
+\justifying
+Los goles son datos de conteo: $0,1,2,3,\dots$. Por ello se considera una distribución de Poisson con parámetro $\lambda$.
+
+\[
+Y \sim \operatorname{Poisson}(\lambda)
+\]
+
+\[
+\log(\lambda)=\beta_0+\beta_1X_1+\cdots+\beta_{13}X_{13}
+\]
+
+\[
+\lambda=\exp\left(\beta_0+\sum_{i=1}^{13}\beta_iX_i\right)
+\]
+
+\vspace{0.1cm}
+Así se obtienen $\lambda_{\text{home}}$ y $\lambda_{\text{away}}$, que representan los goles esperados de cada equipo.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}[t]{Parámetros estimados del modelo Poisson}
+\scriptsize
+\justifying
+En Poisson los coeficientes actúan sobre $\log(\lambda)$; un coeficiente positivo incrementa multiplicativamente la tasa esperada.
+
+\vspace{0.15cm}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{Tasa del local}
+\centering $\beta_0 = 0.3431$
+\vspace{0.05cm}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lr}
+\toprule
+Variable & $\beta$ \\
+\midrule
+Diferencia FIFA & 0.3990 \\
+Goles recibidos visitante & 0.1880 \\
+Goles a favor local & 0.1341 \\
+Puntos local & -0.0923 \\
+Historial directo & 0.0786 \\
+\bottomrule
+\end{tabular}
+}
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{Tasa del visitante}
+\centering $\beta_0 = 0.0073$
+\vspace{0.05cm}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lr}
+\toprule
+Variable & $\beta$ \\
+\midrule
+Diferencia FIFA & -0.3717 \\
+Goles recibidos local & 0.1966 \\
+Goles a favor visitante & 0.1448 \\
+Historial directo & -0.0996 \\
+Puntos visitante & -0.0933 \\
+\bottomrule
+\end{tabular}
+}
+\end{block}
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}[t]{Poisson con valores del proyecto}
+\scriptsize
+\justifying
+En Poisson se reemplaza la ecuación de $\log(\lambda)$ con los coeficientes estimados.
+
+\vspace{0.1cm}
+\begin{block}{Tasa esperada del local}
+\[
+\begin{aligned}
+\log(\lambda_{\text{home}})
+&\approx
+0.3431+0.3990X_9+0.1880X_6\\
+&\quad +0.1341X_1-0.0923X_3+0.0786X_{11}+\cdots
+\end{aligned}
+\]
+\[
+\lambda_{\text{home}}=\exp(\log(\lambda_{\text{home}}))
+\]
+\end{block}
+
+\begin{block}{Tasa esperada del visitante}
+\[
+\begin{aligned}
+\log(\lambda_{\text{away}})
+&\approx
+0.0073-0.3717X_9+0.1966X_2\\
+&\quad +0.1448X_5-0.0996X_{11}-0.0933X_7+\cdots
+\end{aligned}
+\]
+\end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Conversión de goles a probabilidades}
+\justifying
+Los goles esperados se convierten en tasas de anotación:
+
+\[
+\lambda_{\text{home}}, \quad \lambda_{\text{away}}
+\]
+
+Luego se calcula la probabilidad de cada marcador posible:
+
+\[
+P(\text{Home}=a)=
+\frac{e^{-\lambda_{\text{home}}}\lambda_{\text{home}}^a}{a!}
+\]
+
+\[
+P(\text{Away}=b)=
+\frac{e^{-\lambda_{\text{away}}}\lambda_{\text{away}}^b}{b!}
+\]
+
+\[
+P(a,b)=P(\text{Home}=a)\times P(\text{Away}=b)
+\]
+
+\vspace{0.2cm}
+A partir de la matriz de marcadores se obtienen tres escenarios:
+
+\begin{itemize}
+    \item Victoria local: marcadores donde el local anota más.
+    \item Empate: marcadores con igual número de goles.
+    \item Victoria visitante: marcadores donde el visitante anota más.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}[t]{Ejemplo numérico de $\lambda$: Egypt vs Iran}
+\scriptsize
+\centering
+Para el partido analizado, cada modelo produjo tasas de goles esperados y probabilidades 1X2.
+
+\vspace{0.2cm}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+Modelo & $\lambda_{\text{home}}$ & $\lambda_{\text{away}}$ & Local & Empate & Visitante \\
+\midrule
+Ridge & \textbf{1.119} & \textbf{1.521} & 26.960\% & 27.481\% & \textbf{45.559\%} \\
+Regresión Lineal & 1.118 & 1.522 & 26.928\% & 27.479\% & 45.593\% \\
+Poisson & 1.173 & 1.355 & 31.343\% & 28.727\% & 39.930\% \\
+Random Forest & 1.345 & 1.265 & 37.728\% & 28.311\% & 33.961\% \\
+Gradient Boosting & 1.259 & 1.143 & 37.978\% & 29.672\% & 32.350\% \\
+\bottomrule
+\end{tabular}
+}
+
+\vspace{0.25cm}
+\begin{block}{Lectura}
+Con Ridge, Iran obtiene la mayor probabilidad de victoria y el marcador exacto más probable fue 1--1.
+\end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Ajustes del modelo probabilístico}
+\begin{block}{Dixon-Coles}
+Se incorpora una corrección para mejorar la estimación de marcadores cortos, frecuentes en fútbol, como 0--0, 1--0, 0--1 y 1--1.
+
+\[
+P_{\text{ajustada}}(a,b)=P(a,b)\times \tau(a,b,\lambda_{\text{home}},\lambda_{\text{away}},\rho)
+\]
+\end{block}
+
+\vspace{0.25cm}
+\begin{block}{Contexto competitivo}
+La expectativa de goles se ajusta según la situación del partido:
+\[
+\lambda_{\text{home-final}}=\lambda_{\text{home-base}}\times \text{factor}_{\text{home}}
+\]
+
+\[
+\lambda_{\text{away-final}}=\lambda_{\text{away-base}}\times \text{factor}_{\text{away}}
+\]
+\end{block}
+
+\vspace{0.2cm}
+Este ajuste representa escenarios donde un equipo necesita atacar más, conservar un resultado o jugar de forma equilibrada.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Comparación de modelos}
+\small
+\centering
+\begin{tabular}{lcccc}
+\toprule
+Modelo & MAE prom. & RMSE prom. & $R^2$ prom. & Exactitud 1X2 \\
+\midrule
+Ridge & \textbf{0.975} & 1.315 & 0.279 & 0.624 \\
+Regresión Lineal & \textbf{0.975} & 1.314 & 0.279 & 0.624 \\
+Poisson & 0.977 & \textbf{1.307} & \textbf{0.288} & 0.625 \\
+Random Forest & 0.985 & 1.316 & 0.278 & 0.623 \\
+Gradient Boosting & 0.994 & 1.343 & 0.250 & \textbf{0.627} \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.35cm}
+\begin{block}{Resultado de selección}
+El modelo final elegido fue \textbf{Ridge}, por presentar el menor error absoluto promedio y una estructura estable para explicar la predicción.
+\end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Lectura de los resultados}
+\begin{itemize}
+    \item Los errores promedio se ubican alrededor de un gol, una escala razonable para predicción futbolística.
+    \item Ridge y Regresión Lineal tuvieron el menor MAE promedio.
+    \item Poisson obtuvo el mejor RMSE promedio y el mayor $R^2$ promedio.
+    \item Gradient Boosting alcanzó la mayor exactitud en el resultado 1X2.
+    \item La selección final priorizó estabilidad, bajo error e interpretación.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Ejemplo de análisis por partido}
+\justifying
+Para un partido seleccionado, el sistema compara todos los modelos y muestra:
+
+\begin{itemize}
+    \item Goles esperados de ambos equipos.
+    \item Probabilidad de victoria local, empate y victoria visitante.
+    \item Modelo ganador global.
+    \item Marcadores exactos más probables.
+    \item Efecto del contexto competitivo.
+\end{itemize}
+
+\vspace{0.25cm}
+\begin{block}{Ejemplo evaluado}
+Egypt vs Iran: el modelo Ridge estimó mayor probabilidad de victoria visitante, con el marcador 1--1 como marcador exacto más probable.
+\end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Visualización comparativa}
+\centering
+\includegraphics[width=0.83\textwidth,height=0.72\textheight,keepaspectratio]{comparacion_modelos_match_65.png}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Marcadores más probables}
+\centering
+\includegraphics[width=0.75\textwidth,height=0.72\textheight,keepaspectratio]{top10_match_65_ridge.png}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Simulación de fase de grupos}
+\justifying
+Después de estimar los resultados de los partidos, se construyeron tablas de posiciones por grupo.
+
+\vspace{0.25cm}
+\begin{itemize}
+    \item Se calcularon puntos, victorias, empates y derrotas.
+    \item Se consideraron goles a favor, goles en contra y diferencia de goles.
+    \item Se incorporó criterio de fair play para resolver escenarios de desempate.
+    \item Se identificaron primeros, segundos y mejores terceros.
+\end{itemize}
+
+\vspace{0.25cm}
+\begin{block}{Resultado global}
+La simulación entrega \textbf{32 clasificados a 16avos}: 12 primeros, 12 segundos y 8 mejores terceros.
+\end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Tablas predichas por grupo}
+\centering
+\includegraphics[width=0.88\textwidth,height=0.72\textheight,keepaspectratio]{panel_tablas_grupos.png}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Clasificados y cruces simulados}
+\centering
+\includegraphics[width=0.48\textwidth,height=0.68\textheight,keepaspectratio]{panel_clasificados_16avos.png}
+\hfill
+\includegraphics[width=0.48\textwidth,height=0.68\textheight,keepaspectratio]{panel_cruces_16avos.png}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Principales clasificados proyectados}
+\small
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{Primeros de grupo}
+Mexico, Switzerland, Brazil, United States, Germany, Netherlands, Egypt, Spain, France, Argentina, Colombia y England.
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{Algunos cruces simulados}
+Brazil vs Japan, Germany vs Sweden, France vs Turkey, Mexico vs Ecuador, Spain vs Austria y Argentina vs Cape Verde.
+\end{block}
+\end{columns}
+
+\vspace{0.25cm}
+Estos resultados representan una simulación basada en datos históricos, rankings y contexto competitivo; no son certezas deportivas.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Conclusiones}
+\begin{itemize}
+    \item El enfoque permite pasar de datos históricos a predicciones interpretables de partidos.
+    \item La combinación de regresión y Poisson permite estimar goles y convertirlos en probabilidades.
+    \item Ridge fue seleccionado como modelo final por su bajo error promedio y estabilidad.
+    \item El contexto competitivo mejora la lectura del partido porque incorpora la situación del torneo.
+    \item La simulación final permite proyectar tablas, clasificados y cruces de eliminación.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Mensaje final}
+\centering
+\Large
+El proyecto no busca afirmar un resultado exacto, sino construir una herramienta analítica para estimar escenarios probables del Mundial 2026.
+
+\vspace{0.5cm}
+\normalsize
+Gracias.
+\end{frame}
+
+\end{document}
