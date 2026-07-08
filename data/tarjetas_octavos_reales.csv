@@ -1,0 +1,9 @@
+match_id,home_team,away_team,yellow_home,yellow_away,red_home,red_away,source_note
+89,Canada,Morocco,4,4,0,0,FOX boxscore
+90,Paraguay,France,0,3,0,0,FOX boxscore
+91,Brazil,Norway,1,0,0,0,FOX play-by-play
+92,Mexico,England,2,4,0,1,FOX boxscore
+93,Portugal,Spain,2,1,0,0,FOX boxscore
+94,United States,Belgium,2,0,0,0,FOX boxscore
+95,Argentina,Egypt,0,2,0,0,FOX play-by-play
+96,Switzerland,Colombia,3,2,0,0,FOX play-by-play

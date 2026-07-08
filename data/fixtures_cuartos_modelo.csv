@@ -1,0 +1,5 @@
+date,home_team,away_team,neutral,match_id,match_no,stage,group,venue_city,competition,home_gf12,home_ga12,home_pts12,home_prev_matches,away_gf12,away_ga12,away_pts12,away_prev_matches,fifa_home,fifa_away,diff_fifa,elo_home,elo_away,diff_elo,h2h,home_advantage,home_score,away_score,pen_home,pen_away,source_note
+2026-07-09,France,Morocco,1,97,97,CUARTOS,,,FIFA World Cup,32,10,31,12,26,7,26,12,1887.11,1755.62,131.49,2063.0,1840.0,223.0,9,0,,,,,REAL_OFICIAL: ganador 90 vs ganador 89
+2026-07-10,Spain,Belgium,1,98,98,CUARTOS,,,FIFA World Cup,26,4,28,12,38,11,28,12,1856.03,1733.93,122.09999999999992,2129.0,1879.0,250.0,15,0,,,,,REAL_OFICIAL: ganador 93 vs ganador 94
+2026-07-11,Norway,England,1,99,99,CUARTOS,,,FIFA World Cup,26,16,24,12,26,7,29,12,1577.18,1847.68,-270.5,1914.0,2024.0,-110.0,-3,0,,,,,REAL_OFICIAL: ganador 91 vs ganador 92
+2026-07-11,Argentina,Switzerland,1,100,100,CUARTOS,,,FIFA World Cup,32,6,33,12,22,11,21,12,1889.06,1640.92,248.1400000000001,2115.0,1865.0,250.0,9,0,,,,,REAL_OFICIAL: ganador 95 vs ganador 96

@@ -1,0 +1,9 @@
+match_id,date,round,home_team,away_team,home_score,away_score,pen_home,pen_away,source_note
+89,2026-07-04,OCTAVOS,Canada,Morocco,0,3,,,REAL_OFICIAL: Morocco clasifica a cuartos
+90,2026-07-04,OCTAVOS,Paraguay,France,0,1,,,REAL_OFICIAL: France clasifica a cuartos
+91,2026-07-05,OCTAVOS,Brazil,Norway,1,2,,,REAL_OFICIAL: Norway clasifica a cuartos
+92,2026-07-05,OCTAVOS,Mexico,England,2,3,,,REAL_OFICIAL: England clasifica a cuartos
+93,2026-07-06,OCTAVOS,Portugal,Spain,0,1,,,REAL_OFICIAL: Spain clasifica a cuartos
+94,2026-07-06,OCTAVOS,United States,Belgium,1,4,,,REAL_OFICIAL: Belgium clasifica a cuartos
+95,2026-07-07,OCTAVOS,Argentina,Egypt,3,2,,,REAL_OFICIAL: Argentina clasifica a cuartos
+96,2026-07-07,OCTAVOS,Switzerland,Colombia,0,0,4,3,REAL_OFICIAL: Switzerland clasifica por penales 4-3
