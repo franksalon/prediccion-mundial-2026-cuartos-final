@@ -1,0 +1,5 @@
+match_id,home_team,away_team,home_cards_expected,away_cards_expected,total_cards_expected,home_cards_risk,away_cards_risk,match_cards_risk,home_card_points_base,away_card_points_base,context_knockout,context_even_match,context_high_draw_probability,modelo_tarjetas
+97,France,Morocco,2.38,3.38,5.77,MEDIO,ALTO,MEDIO,25.0,34.0,1,0,0,Fair Play + contexto + rival
+98,Spain,Belgium,1.13,1.22,2.35,BAJO,BAJO,BAJO,10.0,8.0,1,0,0,Fair Play + contexto + rival
+99,Norway,England,1.15,4.8,5.95,BAJO,ALTO,MEDIO,2.0,67.0,1,0,0,Fair Play + contexto + rival
+100,Argentina,Switzerland,0.9,2.8,3.7,BAJO,MEDIO,BAJO,3.0,27.0,1,0,0,Fair Play + contexto + rival
